@@ -1,6 +1,6 @@
 # Campus Accessibility
 
-## Περίληψη
+## 1. Περίληψη
 Εφαρμογή αναφοράς προβλημάτων προσβασιμότητας στο ΕΚΠΑ για φοιτητές. 
 
 Οι φοιτητές μπορούν:
@@ -18,7 +18,7 @@
 
 Τελικό project για το Coding Factory 10.
 
-### Χαρακτηριστικά
+### 1.1 Χαρακτηριστικά
 
 - **Δύο ρόλοι**: φοιτητής και διαχειριστής με JWT authentication και role-based πρόσβαση σε δεδομένα και σελίδες
 - **Υποβολή αναφορών/παραπόνων**: ο φοιτητής υποβάλει παράπονα με τίτλο, κατηγορία, σχολή/τμήμα, τοποθεσία, περιγραφή και έως 5 φωτογραφίες. Μόνο ο admin ξέρει ποιος φοιτητής έχει υποβάλει την αναφορά και σε ποιο τμήμα ανήκει. 
@@ -28,7 +28,7 @@
 - **Πίνακας διαχείρισης**: ο φοιτητής μπορεί να παρακολουθεί τις δικές του αναφορές. Ο διαχειριστής μπορεί να διαχειρίζεται τις αναφορές ανά κατάσταση και να βλέπει το πλήθος τους .
 - **Προσβάσιμος σχεδιασμός**: η εφαρμογή είναι προσβάσιμη με το πληκτρολόγιο και με τον αναγνώστη οθόνης NVDA.
 
-## Τεχνολογίες
+## 2. Τεχνολογίες
 
 **Backend** — ASP.NET Core (.NET 10), Entity Framework Core, SQL Server, JWT authentication, AutoMapper, Swagger/OpenAPI.
 
@@ -36,7 +36,7 @@
 
 **Deployment** — Docker Compose (SQL Server + .NET API + Nginx-served React build).
 
-## Δομή repository
+## 3. Δομή repository
 
 ```
 campus-accessibility-project/
@@ -53,14 +53,14 @@ campus-accessibility-project/
     ├── nginx.conf
     └── package.json
 ```
-
-## Προαπαιτούμενα
+## 4. Βήματα deployment 
+### 4.1 Προαπαιτούμενα
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (με Docker Compose)
 - Δεν χρειάζεται τοπική εγκατάσταση .NET, Node.js ή SQL Server, όλα τρέχουν μέσα σε containers
 
 
-## Λήψη του κώδικα
+### 4.2 Λήψη του κώδικα
 
 ```
 git clone <URL-του-repository>
@@ -69,7 +69,7 @@ cd campus-accessibility-project
 > **Σημείωση:** για να λειτουργήσει σε Windows χρειάζεται να εγκατασταθεί [Git](https://git-scm.com/download/win)
 
 
-## Ρύθμιση μεταβλητών περιβάλλοντος
+### 4.3 Ρύθμιση μεταβλητών περιβάλλοντος
 
 Μέσα στο `CampusAccessibilityBackend/`, δημιουργήστε ένα αρχείο `.env` που θα περιέχει τις μεταβλητές όπως το template `.env.example` για παράδειγμα:
 
@@ -113,7 +113,7 @@ VITE_API_BASE_URL=http://localhost:8080
 
 
 
-## Build & Deploy
+### 4.4 Build & Deploy
 
 Από τον φάκελο `CampusAccessibilityBackend/` (όπου βρίσκεται το `docker-compose.yml`):
 
@@ -133,7 +133,7 @@ docker compose up -d --build
 
 Το πρώτο `up -d --build` παίρνει μερικά λεπτά.
 
-### Επιβεβαίωση ότι δουλεύει
+### 4.6 Επιβεβαίωση ότι δουλεύει
 
 ```
 docker compose ps
@@ -151,7 +151,7 @@ docker compose ps
 - **API / Swagger UI**: http://localhost:8080/swagger
 
 
-## Πρόσβαση στην εφαρμογή - Test Credentials
+### 4.7 Πρόσβαση στην εφαρμογή - Test Credentials
 
 Ένας λογαριασμός διαχειριστή δημιουργείται αυτόματα κατά το πρώτο migration:
 
@@ -164,7 +164,7 @@ docker compose ps
 Μπορείτε να εισέλθετε στην εφαρμογή είτε ως φοιτητής είτε ως διαχειριστής από τη σελίδα: `/login`
 
 
-## Σταμάτημα / επανεκκίνηση
+### 4.8 Σταμάτημα / επανεκκίνηση
 
 ```
 docker compose down          # σταματά τα containers, δεν σβήνει δεδομένα
@@ -183,13 +183,13 @@ docker compose build --no-cache frontend   # μετά από αλλαγή στο
 docker compose up -d
 ```
 
-## API Documentation
+## 5. API Documentation
 
 Πλήρης τεκμηρίωση του REST API με Swagger διαθέσιμη στο http://localhost:8080/swagger. 
 
 Περιλαμβάνει JWT authorization (Στο κουμπί `Authorize` εισάγετε μόνο το token χωρίς το πρόθεμα `Bearer `).
 
 
-## Περιορισμοί - Μελλοντικές επεκτάσεις
+## 6. Περιορισμοί - Μελλοντικές επεκτάσεις
 
 - να υποστηρίζει παραπάνω από έναν admin και το ιστορικό αλλαγών να εκθέτει ποιος συγκεκριμένος admin έκανε κάθε αλλαγή.
