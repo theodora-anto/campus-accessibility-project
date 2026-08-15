@@ -1,0 +1,48 @@
+using CampusAccessibilityBackend.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace CampusAccessibilityBackend.Repositories
+{
+    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    {
+        protected readonly AppDbContext _context;
+        protected readonly DbSet<T> _dbSet;
+
+        public BaseRepository(AppDbContext context)
+        {
+            _context = context;
+            _dbSet = _context.Set<T>();
+        }
+
+        public virtual async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
+
+        public virtual async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
+
+        public virtual Task UpdateAsync(T entity)
+        {
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+            return Task.CompletedTask;
+        }
+
+        // ΠΡΟΣΟΧΗ: hard delete (πραγματική SQL DELETE). Repositories πάνω σε entities
+        // με soft-delete (User, Student, Complaint, ComplaintHistory) πρέπει να κάνουν
+        // override αυτή τη μέθοδο και να θέτουν IsDeleted/DeletedAt αντί για Remove().
+        public virtual async Task<bool> DeleteAsync(int id)
+        {
+            T? existingEntity = await _dbSet.FindAsync(id);
+            if (existingEntity is null) return false;
+            _dbSet.Remove(existingEntity);
+            return true;
+        }
+
+        public virtual async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+
+        public virtual async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
+
+        public virtual async Task<int> GetCountAsync() => await _dbSet.CountAsync();
+    }
+}

@@ -1,0 +1,31 @@
+# Dependencies — ξαναχτίζονται μέσα στο container με npm ci
+node_modules/
+
+# Build output — παράγεται από το ίδιο το Dockerfile
+dist/
+
+# IDE / editor
+.vs/
+.vscode/
+*.user
+
+# Git
+.git/
+.gitignore
+
+# Secrets — τα VITE_* env vars περνάνε ως build args, όχι από αυτό το αρχείο
+.env
+.env.*
+!.env.example
+
+# Docker-related αρχεία
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store

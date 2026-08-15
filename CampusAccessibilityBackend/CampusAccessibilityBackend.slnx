@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".env" />
+    <File Path=".env.example" />
+    <File Path="docker-compose.yml" />
+    <File Path="Dockerfile" />
+    <File Path="dockerignore" />
+    <File Path="init-db.sql" />
+  </Folder>
+  <Project Path="CampusAccessibilityBackend/CampusAccessibilityBackend.csproj" />
+</Solution>

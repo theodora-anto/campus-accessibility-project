@@ -1,0 +1,248 @@
+//όμοια με AdminReportsPage
+import { useEffect, useState } from "react"
+import Layout from "@/components/Layout"
+import ReportList from "@/components/ReportList"
+import { Input } from "@/components/ui/input"
+import { Field, FieldLabel } from "@/components/ui/field"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import { Search } from "lucide-react"
+import { toast } from "sonner"
+import { getComplaints } from "@/api/complaints"
+import type { ComplaintListItem } from "@/schemas/complaint"
+import type { ComplaintFilters, PaginatedResult } from "@/types/complaintFilters"
+import { COMPLAINT_STATUS_LABELS, type ComplaintStatus } from "@/types/complaintStatus"
+import { DEPARTMENTS } from "@/data/departments"
+import { CATEGORIES } from "@/data/categories"
+
+const PAGE_SIZE = 20
+
+// Λίστα όλων των τμημάτων (ανεξαρτήτως σχολής) για το φίλτρο
+const ALL_DEPARTMENTS = Object.values(DEPARTMENTS).flat()
+
+export default function SearchIssuesPage() {
+  const [result, setResult] = useState<PaginatedResult<ComplaintListItem> | null>(null)
+  const [pageNumber, setPageNumber] = useState(1)
+  const [latestRequestId, setLatestRequestId] = useState(0)
+  const [loadedRequestId, setLoadedRequestId] = useState(0)
+  const isLoading = latestRequestId !== loadedRequestId
+
+  const [filters, setFilters] = useState<ComplaintFilters>({ sortOrder: "newest" })
+  // Debounce του keyword ώστε να μη γίνεται ένα API call ανά πληκτρολόγημα
+  const [keywordInput, setKeywordInput] = useState("")
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setFilters((prev) => ({ ...prev, keyword: keywordInput || undefined }))
+      setPageNumber(1)
+    }, 400)
+    return () => clearTimeout(timeout)
+  }, [keywordInput])
+
+  useEffect(() => {
+    const requestId = latestRequestId + 1
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLatestRequestId(requestId)
+
+    getComplaints(pageNumber, PAGE_SIZE, filters)
+        .then((data) => {
+          setResult(data)
+          setLoadedRequestId(requestId)
+        })
+        .catch(() => {
+          toast.error("Αδυναμία φόρτωσης αναφορών. Δοκιμάστε ξανά.")
+          setLoadedRequestId(requestId)
+        })
+  }, [pageNumber, filters])
+
+  const updateFilter = (key: keyof ComplaintFilters, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value === "all" ? undefined : value }))
+    setPageNumber(1)
+  }
+
+  const handleFilterChange = (key: keyof ComplaintFilters) => (value: string) => {
+    updateFilter(key, value)
+  }
+
+  return (
+      <Layout pageTitle="Αναζήτηση προβλημάτων">
+        <div className="max-w-4xl mx-auto py-8">
+          <h1 className="text-2xl font-medium text-foreground mb-1">Αναζήτηση προβλημάτων</h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            Δείτε τι έχει ήδη αναφερθεί πριν υποβάλετε νέα αναφορά
+          </p>
+
+          {/* Φίλτρα */}
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-4">
+            <Field className="lg:col-span-3">
+              <FieldLabel htmlFor="keyword">Λέξη-κλειδί</FieldLabel>
+              <div className="relative">
+                <Search
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+                    aria-hidden="true"
+                />
+                <Input
+                    id="keyword"
+                    type="search"
+                    value={keywordInput}
+                    onChange={(e) => setKeywordInput(e.target.value)}
+                    placeholder="π.χ. ανελκυστήρας, ράμπα, είσοδος…"
+                    className="pl-9"
+                />
+              </div>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="filter-dept">Τμήμα</FieldLabel>
+              <Select
+                  value={filters.department ?? "all"}
+                  onValueChange={handleFilterChange("department")}
+              >
+                <SelectTrigger id="filter-dept">
+                  <SelectValue placeholder="Όλα τα τμήματα" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Όλα τα τμήματα</SelectItem>
+                  {ALL_DEPARTMENTS.map((d) => (
+                      <SelectItem key={d} value={d}>
+                        {d}
+                      </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="filter-category">Κατηγορία</FieldLabel>
+              <Select
+                  value={filters.category ?? "all"}
+                  onValueChange={handleFilterChange("category")}
+              >
+                <SelectTrigger id="filter-category">
+                  <SelectValue placeholder="Όλες οι κατηγορίες" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Όλες οι κατηγορίες</SelectItem>
+                  {CATEGORIES.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="filter-status">Κατάσταση</FieldLabel>
+              <Select
+                  value={filters.status ?? "all"}
+                  onValueChange={handleFilterChange("status")}
+              >
+                <SelectTrigger id="filter-status">
+                  <SelectValue placeholder="Όλες οι καταστάσεις" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Όλες οι καταστάσεις</SelectItem>
+                  {(Object.keys(COMPLAINT_STATUS_LABELS) as ComplaintStatus[]).map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {COMPLAINT_STATUS_LABELS[s]}
+                      </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="filter-sort">Ταξινόμηση</FieldLabel>
+              <Select
+                  value={filters.sortOrder ?? "newest"}
+                  onValueChange={handleFilterChange("sortOrder")}
+              >
+                <SelectTrigger id="filter-sort">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Νεότερη πρώτα</SelectItem>
+                  <SelectItem value="oldest">Παλαιότερη πρώτα</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
+
+          {/* Λίστα */}
+          {isLoading ? (
+              <p role="status" aria-live="polite" className="text-center py-12 text-sm text-muted-foreground">
+                Φόρτωση αναφορών…
+              </p>
+          ) : (
+              <ReportList
+                  items={result?.data ?? []}
+                  linkTo={(id) => `/student/complaints/${id}`}
+              />
+          )}
+
+          {/* Pagination */}
+          {result && result.totalPages > 1 && (
+              <Pagination className="mt-6">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                        href="#"
+                        aria-disabled={pageNumber <= 1}
+                        tabIndex={pageNumber <= 1 ? -1 : undefined}
+                        className={pageNumber <= 1 ? "pointer-events-none opacity-50" : ""}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          if (pageNumber > 1) setPageNumber((p) => p - 1)
+                        }}
+                    />
+                  </PaginationItem>
+
+                  {Array.from({ length: result.totalPages }, (_, i) => i + 1).map((p) => (
+                      <PaginationItem key={p}>
+                        <PaginationLink
+                            href="#"
+                            isActive={p === pageNumber}
+                            aria-current={p === pageNumber ? "page" : undefined}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              setPageNumber(p)
+                            }}
+                        >
+                          {p}
+                        </PaginationLink>
+                      </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                        href="#"
+                        aria-disabled={pageNumber >= result.totalPages}
+                        tabIndex={pageNumber >= result.totalPages ? -1 : undefined}
+                        className={pageNumber >= result.totalPages ? "pointer-events-none opacity-50" : ""}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          if (pageNumber < result.totalPages) setPageNumber((p) => p + 1)
+                        }}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+          )}
+        </div>
+      </Layout>
+  )
+}

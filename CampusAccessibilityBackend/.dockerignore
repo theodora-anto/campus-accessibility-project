@@ -1,0 +1,24 @@
+# Build artifacts
+**/bin/
+**/obj/
+
+# IDE 
+**/.vs/
+**/.vscode/
+**/*.user
+
+# Git
+.git/
+.gitignore
+
+# Secrets
+.env
+.env.*
+
+# Docker-related αρχεία
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+**/*.log
