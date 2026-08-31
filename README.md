@@ -96,7 +96,7 @@ VITE_API_BASE_URL=http://localhost:8080
 - **`DB_HOST`** πρέπει να είναι `db`, όχι `localhost`
 - **`ASPNETCORE_ENVIRONMENT` πρέπει να παραμείνει `Development`** αλλιώς το Swagger UI δεν  θα δουλέψει (`Program.cs`, `if (app.Environment.IsDevelopment())`).
 - **`APP_PORT` συνδέεται με το `VITE_API_URL`/`VITE_API_BASE_URL`**. Αν αλλάξετε το `APP_PORT`, θα πρέπει να ενημερώσετε και αυτές τις δύο τιμές ώστε να δείχνουν στο νέο port
-- ** Το port του frontend (`5173`) δεν είναι μεταβλητή περιβάλλοντος** είναι hardcoded μέσα στο `docker-compose.yml` (`"5173:80"`) **και** στο CORS policy του backend στο `Program.cs` (`.WithOrigins("http://localhost:5173")`). Αν χρειαστεί να αλλάξει, απαιτείται επιπρόσθετα αλλαγή και στα δύο αυτά σημεία.
+- **Το port του frontend (`5173`) δεν είναι μεταβλητή περιβάλλοντος** είναι hardcoded μέσα στο `docker-compose.yml` (`"5173:80"`) **και** στο CORS policy του backend στο `Program.cs` (`.WithOrigins("http://localhost:5173")`). Αν χρειαστεί να αλλάξει, απαιτείται επιπρόσθετα αλλαγή και στα δύο αυτά σημεία.
 
 
 | Μεταβλητή | Περιγραφή |
