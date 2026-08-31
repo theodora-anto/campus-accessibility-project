@@ -70,7 +70,7 @@ cd campus-accessibility-project
 
 ### 4.3 Ρύθμιση μεταβλητών περιβάλλοντος
 
-Εντός του φακέλου `CampusAccessibilityBackend/` (σύμφωνα με τη [Δομή του project](## 3. Δομή repository)) , δημιουργήστε ένα αρχείο `.env` που θα περιέχει τις μεταβλητές όπως το template `.env.example`
+Εντός του φακέλου `CampusAccessibilityBackend/` (σύμφωνα με τη [Δομή του project](# 3. Δομή repository)) , δημιουργήστε ένα αρχείο `.env` που θα περιέχει τις μεταβλητές όπως το template `.env.example`
 
 Για παράδειγμα:
 
