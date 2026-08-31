@@ -57,7 +57,7 @@ campus-accessibility-project/
 ### 4.1 Προαπαιτούμενα
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (με Docker Compose)
-- Σε Windows [Git](https://git-scm.com/download/win)
+- [Git](https://git-scm.com/download/win) (σε Windows)
 
 
 ### 4.2 Λήψη του κώδικα
